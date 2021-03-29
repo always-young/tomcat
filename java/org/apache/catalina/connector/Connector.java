@@ -76,7 +76,7 @@ public class Connector extends LifecycleMBeanBase  {
         this(null);
     }
 
-
+    //解析XML掉这个构造方法 server.xml
     public Connector(String protocol) {
         setProtocol(protocol);
         // Instantiate protocol handler
@@ -219,7 +219,7 @@ public class Connector extends LifecycleMBeanBase  {
 
     /**
      * Coyote Protocol handler class name.
-     * Defaults to the Coyote HTTP/1.1 protocolHandler.
+     * org.apache.coyote.http11.Http11NioProtocol 默认的protocolHandler
      */
     protected String protocolHandlerClassName =
         "org.apache.coyote.http11.Http11NioProtocol";
@@ -282,14 +282,6 @@ public class Connector extends LifecycleMBeanBase  {
     }
 
 
-    // ------------------------------------------------------------- Properties
-
-    /**
-     * Return a property from the protocol handler.
-     *
-     * @param name the property name
-     * @return the property value
-     */
     public Object getProperty(String name) {
         String repl = name;
         if (replacements.get(name) != null) {
@@ -299,13 +291,6 @@ public class Connector extends LifecycleMBeanBase  {
     }
 
 
-    /**
-     * Set a property on the protocol handler.
-     *
-     * @param name the property name
-     * @param value the property value
-     * @return <code>true</code> if the property was successfully set
-     */
     public boolean setProperty(String name, String value) {
         String repl = name;
         if (replacements.get(name) != null) {
@@ -314,31 +299,12 @@ public class Connector extends LifecycleMBeanBase  {
         return IntrospectionUtils.setProperty(protocolHandler, repl, value);
     }
 
-
-    /**
-     * Return a property from the protocol handler.
-     *
-     * @param name the property name
-     * @return the property value
-     *
-     * @deprecated Use {@link #getProperty(String)}. This will be removed in
-     *             Tomcat 10 onwards.
-     */
     @Deprecated
     public Object getAttribute(String name) {
         return getProperty(name);
     }
 
 
-    /**
-     * Set a property on the protocol handler.
-     *
-     * @param name the property name
-     * @param value the property value
-     *
-     * @deprecated Use {@link #setProperty(String, String)}. This will be
-     *             removed in Tomcat 10 onwards.
-     */
     @Deprecated
     public void setAttribute(String name, Object value) {
         setProperty(name, String.valueOf(value));
@@ -363,20 +329,11 @@ public class Connector extends LifecycleMBeanBase  {
     }
 
 
-    /**
-     * @return <code>true</code> if the TRACE method is allowed. Default value
-     *         is <code>false</code>.
-     */
     public boolean getAllowTrace() {
         return this.allowTrace;
     }
 
 
-    /**
-     * Set the allowTrace flag, to disable or enable the TRACE HTTP method.
-     *
-     * @param allowTrace The new allowTrace flag
-     */
     public void setAllowTrace(boolean allowTrace) {
         this.allowTrace = allowTrace;
         setProperty("allowTrace", String.valueOf(allowTrace));
@@ -401,29 +358,15 @@ public class Connector extends LifecycleMBeanBase  {
         setProperty("asyncTimeout", String.valueOf(asyncTimeout));
     }
 
-
-    /**
-     * @return <code>true</code> if the object facades are discarded, either
-     *   when the discardFacades value is <code>true</code> or when the
-     *   security manager is enabled.
-     */
     public boolean getDiscardFacades() {
         return discardFacades || Globals.IS_SECURITY_ENABLED;
     }
 
-
-    /**
-     * Set the recycling strategy for the object facades.
-     * @param discardFacades the new value of the flag
-     */
     public void setDiscardFacades(boolean discardFacades) {
         this.discardFacades = discardFacades;
     }
 
 
-    /**
-     * @return the "enable DNS lookups" flag.
-     */
     public boolean getEnableLookups() {
         return this.enableLookups;
     }
@@ -1014,12 +957,13 @@ public class Connector extends LifecycleMBeanBase  {
     }
 
 
+    //init方法
     @Override
     protected void initInternal() throws LifecycleException {
 
         super.initInternal();
 
-        // Initialize adapter
+        // 初始化Adapter
         adapter = new CoyoteAdapter(this);
         protocolHandler.setAdapter(adapter);
 

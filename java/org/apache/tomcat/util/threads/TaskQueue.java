@@ -69,15 +69,22 @@ public class TaskQueue extends LinkedBlockingQueue<Runnable> {
         return super.offer(o,timeout,unit); //forces the item onto the queue, to be used if the task is rejected
     }
 
+    /**
+     * 核心tomcat重写队列的方法
+     * @param o
+     * @return
+     */
     @Override
     public boolean offer(Runnable o) {
-      //we can't do any checks
+        //未使用在线程池里面
         if (parent==null) return super.offer(o);
-        //we are maxed out on threads, simply queue the object
+
+        //getPoolSize()为当前运行的线程数
+        //如果当前线程已经等于最大线程池了也加入队列
         if (parent.getPoolSize() == parent.getMaximumPoolSize()) return super.offer(o);
-        //we have idle threads, just add it to the queue
+        //已提交数小于正在运行的线程数 则加入队列
         if (parent.getSubmittedCount()<=(parent.getPoolSize())) return super.offer(o);
-        //if we have less threads than maximum force creation of a new thread
+        //当前线程池数小于最大线程数 直接启用最大线程数
         if (parent.getPoolSize()<parent.getMaximumPoolSize()) return false;
         //if we reached here, we need to add it to the queue
         return super.offer(o);

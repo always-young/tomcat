@@ -571,6 +571,7 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
 
         // Start timeout thread
         asyncTimeout = new AsyncTimeout();
+        //检测超时的线程
         Thread timeoutThread = new Thread(asyncTimeout, getNameInternal() + "-AsyncTimeout");
         int priority = endpoint.getThreadPriority();
         if (priority < Thread.MIN_PRIORITY || priority > Thread.MAX_PRIORITY) {

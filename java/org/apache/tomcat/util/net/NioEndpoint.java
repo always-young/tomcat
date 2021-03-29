@@ -55,18 +55,10 @@ import org.apache.tomcat.util.net.AbstractEndpoint.Handler.SocketState;
 import org.apache.tomcat.util.net.jsse.JSSESupport;
 
 /**
- * NIO tailored thread pool, providing the following services:
- * <ul>
- * <li>Socket acceptor thread</li>
- * <li>Socket poller thread</li>
- * <li>Worker threads pool</li>
- * </ul>
+ * NioEndPoint 包含Acceptor Poller SocketProcessor
  *
- * When switching to Java 5, there's an opportunity to use the virtual
- * machine's thread pool.
- *
- * @author Mladen Turk
- * @author Remy Maucherat
+ * @author Kevin Liu
+ * @since 1.0.0
  */
 public class NioEndpoint extends AbstractJsseEndpoint<NioChannel> {
 
@@ -79,12 +71,13 @@ public class NioEndpoint extends AbstractJsseEndpoint<NioChannel> {
 
     public static final int OP_REGISTER = 0x100; //register interest op
 
-    // ----------------------------------------------------------------- Fields
-
+    /**
+     * selector 池子
+     */
     private NioSelectorPool selectorPool = new NioSelectorPool();
 
     /**
-     * Server socket "pointer".
+     * nio 服务端类
      */
     private volatile ServerSocketChannel serverSock = null;
 
@@ -99,7 +92,7 @@ public class NioEndpoint extends AbstractJsseEndpoint<NioChannel> {
     private SynchronizedStack<PollerEvent> eventCache;
 
     /**
-     * Bytebuffer cache, each channel holds a set of buffers (two, except for SSL holds four)
+     * nio channel
      */
     private SynchronizedStack<NioChannel> nioChannels;
 
@@ -252,7 +245,7 @@ public class NioEndpoint extends AbstractJsseEndpoint<NioChannel> {
 
 
     /**
-     * Start the NIO endpoint, creating acceptor, poller threads.
+     * 核心endpoint启动监听教程
      */
     @Override
     public void startInternal() throws Exception {
@@ -268,7 +261,7 @@ public class NioEndpoint extends AbstractJsseEndpoint<NioChannel> {
             nioChannels = new SynchronizedStack<>(SynchronizedStack.DEFAULT_SIZE,
                     socketProperties.getBufferPool());
 
-            // Create worker collection
+            // 启动处理的线程池
             if (getExecutor() == null) {
                 createExecutor();
             }
@@ -480,7 +473,7 @@ public class NioEndpoint extends AbstractJsseEndpoint<NioChannel> {
                 state = AcceptorState.RUNNING;
 
                 try {
-                    //if we have reached max connections, wait
+                    //限流器校验
                     countUpOrAwaitConnection();
 
                     SocketChannel socket = null;
@@ -506,7 +499,7 @@ public class NioEndpoint extends AbstractJsseEndpoint<NioChannel> {
                     // Configure the socket
                     if (running && !paused) {
                         // setSocketOptions() will hand the socket off to
-                        // an appropriate processor if successful
+                        //处理socket
                         if (!setSocketOptions(socket)) {
                             closeSocket(socket);
                         }

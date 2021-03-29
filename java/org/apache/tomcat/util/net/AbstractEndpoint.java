@@ -916,6 +916,7 @@ public abstract class AbstractEndpoint<S> {
 
     public void createExecutor() {
         internalExecutor = true;
+        //自定义的executor
         TaskQueue taskqueue = new TaskQueue();
         TaskThreadFactory tf = new TaskThreadFactory(getName() + "-exec-", daemon, getThreadPriority());
         executor = new ThreadPoolExecutor(getMinSpareThreads(), getMaxThreads(), 60, TimeUnit.SECONDS,taskqueue, tf);
@@ -1096,6 +1097,7 @@ public abstract class AbstractEndpoint<S> {
             }
             SocketProcessorBase<S> sc = processorCache.pop();
             if (sc == null) {
+                //SocketProcessor
                 sc = createSocketProcessor(socketWrapper, event);
             } else {
                 sc.reset(socketWrapper, event);
@@ -1140,8 +1142,9 @@ public abstract class AbstractEndpoint<S> {
 
     public void init() throws Exception {
         if (bindOnInit) {
-            //启动
+            //启动端口监听
             bind();
+            //更新状态为init
             bindState = BindState.BOUND_ON_INIT;
         }
         if (this.domain != null) {
@@ -1294,6 +1297,7 @@ public abstract class AbstractEndpoint<S> {
     protected LimitLatch initializeConnectionLatch() {
         if (maxConnections==-1) return null;
         if (connectionLimitLatch==null) {
+            //最大一万个连接
             connectionLimitLatch = new LimitLatch(getMaxConnections());
         }
         return connectionLimitLatch;

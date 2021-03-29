@@ -23,12 +23,10 @@ import org.apache.tomcat.util.net.NioEndpoint;
 
 
 /**
- * Abstract the protocol implementation, including threading, etc.
- * Processor is single threaded and specific to stream-based protocols,
- * will not fit Jk protocols like JNI.
+ * nio处理的http协议
  *
- * @author Remy Maucherat
- * @author Costin Manolache
+ * @author Kevin Liu
+ * @since 1.0.0
  */
 public class Http11NioProtocol extends AbstractHttp11JsseProtocol<NioChannel> {
 

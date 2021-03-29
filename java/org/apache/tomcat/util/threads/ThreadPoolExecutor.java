@@ -168,13 +168,16 @@ public class ThreadPoolExecutor extends java.util.concurrent.ThreadPoolExecutor 
      * @throws NullPointerException if command or unit is null
      */
     public void execute(Runnable command, long timeout, TimeUnit unit) {
+        //已提交数
         submittedCount.incrementAndGet();
         try {
             super.execute(command);
         } catch (RejectedExecutionException rx) {
+            //如果走拒绝策略了 再次尝试往队列加
             if (super.getQueue() instanceof TaskQueue) {
                 final TaskQueue queue = (TaskQueue)super.getQueue();
                 try {
+                    //尝试失败
                     if (!queue.force(command, timeout, unit)) {
                         submittedCount.decrementAndGet();
                         throw new RejectedExecutionException(sm.getString("threadPoolExecutor.queueFull"));

@@ -1029,31 +1029,6 @@ public class ContextConfig implements LifecycleListener {
      * web.xml file.
      */
     protected void webConfig() {
-        /*
-         * Anything and everything can override the global and host defaults.
-         * This is implemented in two parts
-         * - Handle as a web fragment that gets added after everything else so
-         *   everything else takes priority
-         * - Mark Servlets as overridable so SCI configuration can replace
-         *   configuration from the defaults
-         */
-
-        /*
-         * The rules for annotation scanning are not as clear-cut as one might
-         * think. Tomcat implements the following process:
-         * - As per SRV.1.6.2, Tomcat will scan for annotations regardless of
-         *   which Servlet spec version is declared in web.xml. The EG has
-         *   confirmed this is the expected behaviour.
-         * - As per http://java.net/jira/browse/SERVLET_SPEC-36, if the main
-         *   web.xml is marked as metadata-complete, JARs are still processed
-         *   for SCIs.
-         * - If metadata-complete=true and an absolute ordering is specified,
-         *   JARs excluded from the ordering are also excluded from the SCI
-         *   processing.
-         * - If an SCI has a @HandlesType annotation then all classes (except
-         *   those in JARs excluded from an absolute ordering) need to be
-         *   scanned to check if they match.
-         */
         WebXmlParser webXmlParser = new WebXmlParser(context.getXmlNamespaceAware(),
                 context.getXmlValidation(), context.getXmlBlockExternal());
 

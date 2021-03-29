@@ -126,7 +126,7 @@ public abstract class LifecycleBase implements Lifecycle {
 
 
     @Override
-    public final synchronized void init() throws LifecycleException {
+    public final synchronized void  init() throws LifecycleException {
         if (!state.equals(LifecycleState.NEW)) {
             invalidTransition(Lifecycle.BEFORE_INIT_EVENT);
         }
